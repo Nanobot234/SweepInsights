@@ -36,33 +36,4 @@ SOCRATA_APP_TOKEN = "your_token_here"
 ```bash
 python main.py
 ```
-
-SweepInsights/
-├── requirements.txt      # Python dependencies
-├── config.py             # Configuration settings
-├── data_analysis.py      # Functions for analyzing sweep data and providing insights
-├── main.py               # Entry point for the application
-├── README.md             # Project documentation
-├── cache/
-│   └── address_cache.json  # Cached address-to-physical ID mappings
-├── data/
-│   ├── address_mapper.py  # Address-to-PhysicalID mapping with caching
-│   ├── data_fetcher.py    # API data fetching logic for NYC Open Data
-│   ├── sweep_tracker.py   # Main tracking logic for street sweeping data
-│   └── __pycache__/       # Compiled Python files for the `data` module
-├── geoclient/
-│   ├── sweep_rules_geoclient.py  # Fetches sweep rules for a given address using geolocation
-│   └── __pycache__/              # Compiled Python files for the `geoclient` module
-├── network/              # (Empty directory, purpose not defined yet)
-├── rules/                # (Empty directory, purpose not defined yet)
-├── tests/                # (Empty directory, purpose not defined yet)
-├── Utilities/
-│   ├── check_columns.py  # Utility script to check available columns in datasets
-│   ├── config.py         # Duplicate configuration file (may need cleanup)
-│   ├── test_api.py       # Tests API queries for parking violations
-│   ├── test_basic_query.py  # Tests basic queries to the street centerline dataset
-│   ├── test_datasets.py  # Tests multiple dataset IDs for compatibility
-│   ├── test_signs.py     # Tests fetching alternate side parking sign data
-│   └── __pycache__/      # Compiled Python files for the `Utilities` module
-└── .vscode/
-    └── settings.json     # VS Code workspace settings for Python analysis
+## Key Files

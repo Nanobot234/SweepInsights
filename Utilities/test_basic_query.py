@@ -7,7 +7,7 @@ def test_basic_query():
     try:
         # Try a very basic query without specific columns
         results = client.get(
-            DATASET_IDS['street_centerline'],
+            DATASET_IDS['parking_violations_2024'],
             limit=1
         )
         

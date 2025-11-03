@@ -2,23 +2,26 @@ import requests
 import json
 import time
 from  geopy.geocoders import Nominatim
+from geopy.exc import GeocoderUnavailable
 
 
 # Fetching the sweep rules statement for a given address
 def get_sweep_rules_by_address(house_number, street_name, borough="Bronx"):
-   # url = "https://sweepnyc.nyc.gov/mappingapi/api/highlight/sweepinfo"
-    # params = {
-    #     "lat": lat,
-    #     "lon": lon,
-    #     "radius": 0.5,  # or whatever radius is appropriate
-    #     "t": int(round(time.time() * 1000))  # sometimes they include timestamp param
-    # }
-
     address = f"{house_number} {street_name}, {borough}, NY"
     print(f"Looking up address: {address}")
+
     # Step 2. Geocode the address
-    geolocator = Nominatim(user_agent="sweepnyc_lookup")
-    location = geolocator.geocode(address)
+    geolocator = Nominatim(user_agent="sweepnyc_lookup", timeout=10)  # Increased timeout
+
+    try:
+        location = geolocator.geocode(address)
+    except GeocoderUnavailable:
+        print("Geocoding service is unavailable. Retrying...")
+        time.sleep(1)  # Add delay before retrying
+        try:
+            location = geolocator.geocode(address)
+        except GeocoderUnavailable:
+            return {"error": f"Could not geocode address: {address}"}
 
     if not location:
         return {"error": f"Could not geocode address: {address}"}
@@ -35,7 +38,7 @@ def get_sweep_rules_by_address(house_number, street_name, borough="Bronx"):
     }
 
     try:
-        r = requests.get(url, params=params, timeout=10)
+        r = requests.get(url, params=params, timeout=10)  # Increased timeout for API request
         r.raise_for_status()
         data = r.json()
     except Exception as e:
@@ -58,7 +61,6 @@ def get_sweep_rules_by_address(house_number, street_name, borough="Bronx"):
         "address": address,
         "street": data.get("Street"),
         "rules": rules,
-        #"priority": data.get("Attributes", {}).get("PRIORITY_ATTRIB")
     }
 
   

@@ -8,7 +8,7 @@ class SweepTracker:
     '''Main class for tracking street sweeping data'''
 
     def __init__(self):
-        self.data_fetcher = DataFetcher(data_path="/Users/nanabonsu/Downloads/StreetCleaningViolations.csv")
+        self.data_fetcher = DataFetcher(data_path="/Users/nanabonsu/PythonProjects/SweepInsights/data/csvs")
         self.address_mapper = AddressMapper()
 
 
@@ -59,8 +59,16 @@ class SweepTracker:
         # Get sweep data
         sweep_data_list = self.data_fetcher.get_sweep_data(physical_id, limit=num_records)
 
-        
+        #print list contents
+
+        # for entry in sweep_data_list:
+        #     print(f"Sweep data entry: {entry}")
+        #     #continuing from here??!
+
+
+
         print(f"Sweep data list length: {len(sweep_data_list)}")
+
 
         if not sweep_data_list:
             no_data_result = {
@@ -88,22 +96,34 @@ class SweepTracker:
             }
             for entry in sweep_data_list[:num_records]
         ]
-
         if num_records == 1:
-            # Return a single dictionary for the most recent sweep
             entry = last_sweeps[0]
-            print(f"Most recent sweep entry: {entry}")
-            # Ensure all relevant fields are included
+            last_swept = entry.get("last_swept")
+            # Build a sensible message when there's no date/time
+            if last_swept:
+                message = f"Street was last swept on {last_swept}"
+                status = "success"
+            else:
+                message = "No recorded sweep date/time for this street segment"
+                status = "no_data"
+
             return {
-                "status": entry.get("status"),
-                "address": entry.get("address"),
-                "physical_id": entry.get("physical_id"),
-                "last_swept": entry.get("last_swept"), #dte visited is in the data, last swept is just a key
-                # "time_visited": entry.get("time_visited"), not importatn  I think here!~
-                "message": f"Street was last swept on {entry.get('date_visited')}"
+                "status": status,
+                "address": f"{house_number} {street_name}",
+                "physical_id": physical_id,
+                "last_swept": last_swept,
+                "message": message
             }
         else:
-            return last_sweeps
+            # For multiple records, normalize entries to always include last_swept and a message
+            result = []
+            for entry in last_sweeps:
+                ls = entry.get("last_swept")
+                result.append({
+                    "last_swept": ls,
+                    "message": f"Street was swept on {ls}" if ls else "No recorded sweep date/time for this street segment"
+                })
+            return result
     
     
     def get_street_risk_score(self, street_name):
